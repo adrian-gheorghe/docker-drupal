@@ -1,0 +1,53 @@
+version: '3.3'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - /var/lib/mysql
+    networks:
+      - traefik-local
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_ROOT_PASSWORD: "drupal"
+  php:
+    container_name: drupalphp
+    build:
+      context: ./docker/php
+      args:
+        PHP_VERSION: 7.1
+        DRUPAL_VERSION: 8.6.7
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.basic.port=80"
+      - "traefik.basic.protocol=http"
+      - "traefik.backend=php"
+      - "traefik.frontend.rule=Host:drupal.localhost"
+      - "traefik.docker.network=traefik-local"
+    volumes:
+      - ./modules:/var/www/drupal8/web/modules/custom
+      - ./themes:/var/www/drupal8/web/themes/custom
+    networks:
+      - traefik-local
+    depends_on:
+      - db
+  adminer:
+    container_name: drupaladminer
+    image: adminer
+    labels:
+    - "traefik.enable=true"
+    - "traefik.basic.port=8080"
+    - "traefik.basic.protocol=http"
+    - "traefik.backend=adminer"
+    - "traefik.frontend.rule=Host:adminer.drupal.localhost"
+    - "traefik.docker.network=traefik-local"
+    networks:
+    - traefik-local
+    ports:
+      - "8080"
+
+networks:
+  traefik-local:
+    external: true
