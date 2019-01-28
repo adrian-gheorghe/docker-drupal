@@ -1,5 +1,9 @@
 # Drupal 8 Docker development environment
 
+[![CircleCI](https://circleci.com/gh/adrian-gheorghe/docker-drupal.svg?style=svg)](https://circleci.com/gh/adrian-gheorghe/docker-drupal)
+
+Drupal 8 local development environment
+
 ## Setup
 Requires https://github.com/adrian-gheorghe/docker-setup for the docker-compose setup to function correctly
 
